@@ -121,7 +121,7 @@ class NefitCore:
         return self.send(body)
 
     def send(self, body):
-        # this horrible peace of code breaks xml syntax but does actually work...
+        # this horrible piece of code breaks xml syntax but does actually work...
         body = body.replace("\r", "&#13;\n")
         message = self.client.make_message(mto=self._to, mfrom=self._from, mbody=body)
         message['lang'] = None
