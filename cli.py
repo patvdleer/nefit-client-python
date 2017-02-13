@@ -61,10 +61,7 @@ class CLI:
 
         if args.set_temperature:
             client.set_temperature(args.set_temperature)
-            print("Temperature set to %f" % args.set_temperature)
-
-        for i in range(0, 10000):
-            time.sleep(0.001)
+            print("Temperature set to %3.1f" % args.set_temperature)
 
         client.disconnect()
 
