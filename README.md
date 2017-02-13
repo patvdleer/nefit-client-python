@@ -1,4 +1,4 @@
-# Nefit Client
+# Bosch Nefit Easy™ Client
 
 ## Usage
 ```bash
@@ -16,5 +16,6 @@ optional arguments:
   --display-code        Display code
   --set-temperature SET_TEMPERATURE
                         Display code
-  --version             show program's version number and exit
+  -v, --verbose         Increase output verbosity
+  --version             show program s version number and exit
 ```

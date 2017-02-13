@@ -71,10 +71,17 @@ class NefitCore:
         self.client.add_event_handler("session_start", self.session_start)
         self.client.register_plugin('xep_0199')
 
+    @staticmethod
+    def set_verbose():
+        import logging
+        logging.basicConfig(filename="debug.log", level=logging.DEBUG)
+
     def message(self, msg):
         if msg['type'] in ('chat', 'normal'):
             headers = msg['body'].split("\n")[:-1]
             body = msg['body'].split("\n")[-1:][0]
+            if 'HTTP/1.0 400 Bad Request' in headers:
+                return
             response = self.decrypt(body)
             if 'Content-Type: application/json' in headers:
                 response = json.loads(response.strip())
@@ -87,7 +94,7 @@ class NefitCore:
 
     def session_start(self, event):
         self.client.send_presence()
-        # self.client.get_roster()
+        self.client.get_roster()
 
     def disconnect(self):
         self.client.disconnect()
@@ -107,14 +114,12 @@ class NefitCore:
             'PUT %s HTTP/1.1' % uri,
             'Content-Type: application/json',
             'Content-Length: %i' % len(encrypted_data),
-            'User-Agent: NefitEasy'
-            '&#13;\n',
+            'User-Agent: NefitEasy\r',
             encrypted_data
         ])
         return self.send(body)
 
     def send(self, body):
-        body = body.replace('\r', "&#13;\n")
         message = self.client.make_message(mto=self._to, mfrom=self._from, mbody=body)
         message['lang'] = None
         return message.send()
@@ -169,6 +174,8 @@ class NefitClient(NefitCore):
 
     def get_status(self):
         data = super(NefitClient, self).get_status()
+        if data is None:
+            return ""
         data.update(data['value'])
         return {
             'user mode': data['UMD'],

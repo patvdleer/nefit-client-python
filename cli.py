@@ -34,7 +34,7 @@ class CLI:
         parser.add_argument("--status", help="Status", action="store_true")
         parser.add_argument("--display-code", dest="display_code", help="Display code", action="store_true")
         parser.add_argument("--set-temperature", dest="set_temperature", help="Display code", type=float)
-        # parser.add_argument("-v", "--verbose", help="Increase output verbosity", action="store_true")
+        parser.add_argument("-v", "--verbose", help="Increase output verbosity", action="store_true")
         parser.add_argument('--version', action='version', version='%(prog)s 0.1')
 
     def parse(self, args=None):
@@ -43,6 +43,10 @@ class CLI:
 
     def run(self):
         args = self.parse()
+
+        if args.verbose:
+            NefitClient.set_verbose()
+
         client = NefitClient(args.serial, args.access_key, args.password)
         client.connect()
 
@@ -50,14 +54,17 @@ class CLI:
             for k, v in client.get_status().items():
                 if isinstance(v, bool):
                     print("%s: %s" % (k, "Yes" if v else "No"))
-                print("%s: %s" % (k, v))
-
+                else:
+                    print("%s: %s" % (k, v))
         if args.display_code:
             print(client.get_display_code())
 
         if args.set_temperature:
             client.set_temperature(args.set_temperature)
             print("Temperature set to %f" % args.set_temperature)
+
+        for i in range(0, 10000):
+            time.sleep(0.001)
 
         client.disconnect()
 
