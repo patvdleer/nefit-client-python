@@ -1,8 +1,7 @@
-import time
 import sys
 import signal
 
-from nefit import NefitClient
+from nefit import NefitClientCli
 
 try:
     import argparse
@@ -33,6 +32,10 @@ class CLI:
         parser.add_argument("--password", help='Password, usually postalcode + housenumber')
         parser.add_argument("--status", help="Status", action="store_true")
         parser.add_argument("--display-code", dest="display_code", help="Display code", action="store_true")
+        parser.add_argument("--location", help="Display location", action="store_true")
+        parser.add_argument("--outdoor", help="Display outdoor", action="store_true")
+        parser.add_argument("--pressure", help="Display pressure", action="store_true")
+        parser.add_argument("--program", help="Display program", action="store_true")
         parser.add_argument("--set-temperature", dest="set_temperature", help="Display code", type=float)
         parser.add_argument("-v", "--verbose", help="Increase output verbosity", action="store_true")
         parser.add_argument('--version', action='version', version='%(prog)s 0.1')
@@ -45,19 +48,28 @@ class CLI:
         args = self.parse()
 
         if args.verbose:
-            NefitClient.set_verbose()
+            NefitClientCli.set_verbose()
 
-        client = NefitClient(args.serial, args.access_key, args.password)
+        client = NefitClientCli(args.serial, args.access_key, args.password)
         client.connect()
 
         if args.status:
-            for k, v in client.get_status().items():
-                if isinstance(v, bool):
-                    print("%s: %s" % (k, "Yes" if v else "No"))
-                else:
-                    print("%s: %s" % (k, v))
+            print(client.get_status())
+
         if args.display_code:
             print(client.get_display_code())
+
+        if args.location:
+            print(client.get_location())
+
+        if args.outdoor:
+            print(client.get_outdoor())
+
+        if args.pressure:
+            print(client.get_pressure())
+
+        if args.program:
+            print(client.get_program())
 
         if args.set_temperature:
             client.set_temperature(args.set_temperature)

@@ -143,6 +143,22 @@ class NefitCore:
     def get_status(self):
         return self.get('/ecus/rrc/uiStatus')
 
+    def get_location(self):
+        return self.get('/system/location/latitude'), self.get('/system/location/longitude')
+
+    def get_outdoor(self):
+        return self.get('/system/sensors/temperatures/outdoor_t1')
+
+    def get_pressure(self):
+        return self.get('/system/appliance/systemPressure')
+
+    def get_program(self):
+        return (
+            self.get('/ecus/rrc/userprogram/activeprogram'),
+            self.get('/ecus/rrc/userprogram/program1'),
+            self.get('/ecus/rrc/userprogram/program2'),
+        )
+
     def set_temperature(self, temperature):
         self.put('/heatingCircuits/hc1/temperatureRoomManual', {'value': int(temperature)})
         self.put('/heatingCircuits/hc1/manualTempOverride/status', {'value': 'on'})
@@ -209,4 +225,51 @@ class NefitClient(NefitCore):
             'temp manual setpoint': float(data['MMT']),
             'hed enabled': data['HED_EN'].lower() == "true",
             'hed device at home': data['HED_DEV'].lower() == "true"
+        }
+
+    def get_location(self):
+        lat, long = super(NefitClient, self).get_location()
+        return lat['value'], long['value']
+
+    def get_outdoor(self):
+        data = super(NefitClient, self).get_outdoor()
+        return data['value'], data['unitOfMeasure']
+
+    def get_pressure(self):
+        data = super(NefitClient, self).get_pressure()
+        return data['value'], data['unitOfMeasure']
+
+    def get_program(self):
+        data = super(NefitClient, self).get_program()
+        return {
+            "active_program": data[0]['value']
+        }
+
+
+class NefitClientCli(NefitClient):
+    def get_status(self):
+        data = super(NefitClientCli, self).get_status()
+        s = ""
+        for k, v in data.items():
+            if isinstance(v, bool):
+                s += "%s: %s\n" % (k, "Yes" if v else "No")
+            else:
+                s += "%s: %s\n" % (k, v)
+        return s
+
+    def get_location(self):
+        return "Latitude: %s Longitude: %s" % super(NefitClientCli, self).get_outdoor()
+
+    def get_outdoor(self):
+        value, unit_of_measure = super(NefitClientCli, self).get_outdoor()
+        return "%3.1f %s" % (value, unit_of_measure)
+
+    def get_pressure(self):
+        value, unit_of_measure = super(NefitClientCli, self).get_pressure()
+        return "%3.1f %s" % (value, unit_of_measure)
+
+    def get_program(self):
+        data = super(NefitClient, self).get_program()
+        return {
+            "active_program": data[0]['value']
         }
