@@ -87,7 +87,7 @@ class NefitCore:
             if 'Content-Type: application/json' in headers:
                 response = json.loads(response.strip())
             self.container[id(self.event)] = response
-        self.event.is_set()
+        self.event.set()
 
     def connect(self, block=False):
         self.client.connect()
