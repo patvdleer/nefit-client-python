@@ -2,11 +2,13 @@ import base64
 import hashlib
 import json
 from multiprocessing import Event
+import logging
 
 from Crypto.Cipher import AES
 from sleekxmpp import ClientXMPP
 from sleekxmpp.xmlstream import tostring
 
+_LOGGER = logging.getLogger(__name__)
 
 class AESCipher(object):
     def __init__(self, magic, access_key, password):
@@ -85,7 +87,10 @@ class NefitCore:
                 return
             response = self.decrypt(body)
             if 'Content-Type: application/json' in headers:
-                response = json.loads(response.strip())
+                _LOGGER.debug("response='{}'".format(response))
+                response = response.strip()
+                if len(response) > 1:
+                    response = json.loads(response.strip())
             self.container[id(self.event)] = response
         self.event.set()
 
@@ -108,7 +113,7 @@ class NefitCore:
         self.client.del_event_handler("message", self.message)
         return self.container[id(self.event)] if id(self.event) in self.container.keys() else None
 
-    def put(self, uri, data):
+    def put(self, uri, data, timeout=10):
         data = data if isinstance(data, str) else json.dumps(data, separators=(',', ':'))
         encrypted_data = self.encrypt(data).decode("utf8")
         body = "\r".join([
@@ -118,7 +123,11 @@ class NefitCore:
             'User-Agent: NefitEasy\r',
             encrypted_data
         ])
-        return self.send(body)
+        self.event = Event()
+        self.client.add_event_handler("message", self.message)
+        self.send(body)
+        self.event.wait(timeout=timeout)
+        self.client.del_event_handler("message", self.message)
 
     def send(self, body):
         # this horrible piece of code breaks xml syntax but does actually work...
@@ -160,9 +169,9 @@ class NefitCore:
         )
 
     def set_temperature(self, temperature):
-        self.put('/heatingCircuits/hc1/temperatureRoomManual', {'value': int(temperature)})
+        self.put('/heatingCircuits/hc1/temperatureRoomManual', {'value': float(temperature)})
         self.put('/heatingCircuits/hc1/manualTempOverride/status', {'value': 'on'})
-        self.put('/heatingCircuits/hc1/manualTempOverride/temperature', {'value': int(temperature)})
+        self.put('/heatingCircuits/hc1/manualTempOverride/temperature', {'value': float(temperature)})
 
 
 class NefitClient(NefitCore):
@@ -199,6 +208,7 @@ class NefitClient(NefitCore):
         data = super(NefitClient, self).get_status()
         if data is None:
             return ""
+        _LOGGER.debug("get_status/data={}".format(data))
         data.update(data['value'])
         return {
             'user mode': data['UMD'],
