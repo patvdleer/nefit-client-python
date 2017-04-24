@@ -13,5 +13,5 @@ setup(
     maintainer_email='pat.vdleer@gmail.com',
     url='https://github.com/patvdleer/nefit-client-python.git',
     packages=["nefit"],
-    install_requires=['pycrypto', 'sleekxmpp']
+    install_requires=['pyaes', 'sleekxmpp']
 )

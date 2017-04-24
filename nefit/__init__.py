@@ -4,11 +4,12 @@ import json
 from multiprocessing import Event
 import logging
 
-from Crypto.Cipher import AES
+from pyaes import AESModeOfOperationECB, Encrypter, Decrypter, PADDING_NONE
 from sleekxmpp import ClientXMPP
 from sleekxmpp.xmlstream import tostring
 
 _LOGGER = logging.getLogger(__name__)
+
 
 class AESCipher(object):
     def __init__(self, magic, access_key, password):
@@ -19,13 +20,19 @@ class AESCipher(object):
     def encrypt(self, raw):
         if len(raw) % self.bs != 0:
             raw = self._pad(raw)
-        cipher = AES.new(self.key, AES.MODE_ECB)
-        return base64.b64encode(cipher.encrypt(raw))
+        cipher = Encrypter(AESModeOfOperationECB(self.key), padding=PADDING_NONE)
+        ciphertext = cipher.feed(raw) + cipher.feed()
+
+        return base64.b64encode(ciphertext)
 
     def decrypt(self, enc):
+        # trying to decrypt empty data fails
+        if not enc:
+            return ""
         enc = base64.b64decode(enc)
-        cipher = AES.new(self.key, AES.MODE_ECB)
-        return cipher.decrypt(enc).decode("utf8").rstrip(chr(0))
+        cipher = Decrypter(AESModeOfOperationECB(self.key), padding=PADDING_NONE)
+        decrypted = cipher.feed(enc) + cipher.feed()
+        return decrypted.decode("utf8").rstrip(chr(0))
 
     def _pad(self, s):
         return s + (self.bs - len(s) % self.bs) * chr(0)
@@ -167,6 +174,9 @@ class NefitCore:
             self.get('/ecus/rrc/userprogram/program1'),
             self.get('/ecus/rrc/userprogram/program2'),
         )
+
+    def get_year_total(self):
+        return self.get('/ecus/rrc/recordings/yearTotal')
 
     def set_temperature(self, temperature):
         self.put('/heatingCircuits/hc1/temperatureRoomManual', {'value': float(temperature)})
