@@ -7,6 +7,7 @@ setup(
     name='nefit-client',
     version='0.2',
     description='Python API and command line tool for talking to the Nefit Easy™ Thermostat',
+    long_description=open("README.md").read(),
     author='Patrick van der Leer',
     author_email='pat.vdleer@gmail.com',
     maintainer='Patrick van der Leer',
