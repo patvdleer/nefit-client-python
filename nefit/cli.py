@@ -16,7 +16,7 @@ class CLI:
     @staticmethod
     def sig_handler(signum=None, frame=None):
         if signum is not None:
-            pass
+            sys.exit(signum)
 
     def __init__(self):
         signal.signal(signal.SIGINT, self.sig_handler)
@@ -27,9 +27,9 @@ class CLI:
             prog="Nefit client",
             usage='%(prog)s [options]'
         )
-        parser.add_argument("--serial", help='Serial, 9 number digit')
-        parser.add_argument("--access-key", dest="access_key", help='Access key, 12 long')
-        parser.add_argument("--password", help='Password, usually postalcode + housenumber')
+        parser.add_argument("--serial", help='Serial, 9 number digit', required=True)
+        parser.add_argument("--access-key", dest="access_key", help='Access key, 12 long', required=True)
+        parser.add_argument("--password", help='Password, usually postalcode + housenumber', required=True)
         parser.add_argument("--status", help="Status", action="store_true")
         parser.add_argument("--display-code", dest="display_code", help="Display code", action="store_true")
         parser.add_argument("--location", help="Display location", action="store_true")
@@ -77,6 +77,11 @@ class CLI:
 
         client.disconnect()
 
-if __name__ == "__main__":
+
+def main():
     cli = CLI()
     cli.run()
+
+
+if __name__ == "__main__":
+    main()
