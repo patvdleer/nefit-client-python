@@ -2,6 +2,7 @@ import sys
 import signal
 
 from nefit import NefitClientCli
+from nefit import version
 
 try:
     import argparse
@@ -38,7 +39,7 @@ class CLI:
         parser.add_argument("--program", help="Display program", action="store_true")
         parser.add_argument("--set-temperature", dest="set_temperature", help="Display code", type=float)
         parser.add_argument("-v", "--verbose", help="Increase output verbosity", action="store_true")
-        parser.add_argument('--version', action='version', version='%(prog)s 0.1')
+        parser.add_argument('--version', action='version', version='%(prog)s '+version)
 
     def parse(self, args=None):
         args = self.parser.parse_args(args)

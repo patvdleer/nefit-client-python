@@ -2,11 +2,12 @@
 # -*- coding:utf-8 -*-
 
 from setuptools import setup
+from nefit import version
 import os
 
 setup(
     name='nefit-client',
-    version='0.2.2',
+    version=version,
     description='Python API and command line tool for talking to the Nefit Easy™ Thermostat',
     long_description=open("README.md").read() if os.path.exists("README.md") else "",
     author='Patrick van der Leer',
@@ -14,7 +15,7 @@ setup(
     maintainer='Patrick van der Leer',
     maintainer_email='pat.vdleer@gmail.com',
     url='https://github.com/patvdleer/nefit-client-python.git',
-    download_url='https://github.com/patvdleer/nefit-client-python/archive/v0.2.2.tar.gz',
+    download_url='https://github.com/patvdleer/nefit-client-python/archive/v%s.tar.gz' % version,
     packages=["nefit"],
     install_requires=['pyaes', 'sleekxmpp'],
     license='MIT',
