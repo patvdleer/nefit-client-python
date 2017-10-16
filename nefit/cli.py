@@ -36,6 +36,7 @@ class CLI:
         parser.add_argument("--outdoor", help="Display outdoor", action="store_true")
         parser.add_argument("--pressure", help="Display pressure", action="store_true")
         parser.add_argument("--program", help="Display program", action="store_true")
+        parser.add_argument("--actual", help="Display actual supply temperature", action="store_true")
         parser.add_argument("--set-temperature", dest="set_temperature", help="Display code", type=float)
         parser.add_argument("-v", "--verbose", help="Increase output verbosity", action="store_true")
         parser.add_argument('--version', action='version', version='%(prog)s 0.1')
@@ -70,6 +71,9 @@ class CLI:
 
         if args.program:
             print(client.get_program())
+
+        if args.actual:
+            print(client.get_actualSupplyTemperature())
 
         if args.set_temperature:
             client.set_temperature(args.set_temperature)
