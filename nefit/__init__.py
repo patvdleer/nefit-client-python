@@ -283,7 +283,7 @@ class NefitClientCli(NefitClient):
         return s
 
     def get_location(self):
-        return "Latitude: %s Longitude: %s" % super(NefitClientCli, self).get_outdoor()
+        return "Latitude: %s Longitude: %s" % super(NefitClientCli, self).get_location()
 
     def get_outdoor(self):
         value, unit_of_measure = super(NefitClientCli, self).get_outdoor()
