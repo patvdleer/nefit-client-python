@@ -184,6 +184,8 @@ class NefitCore:
         self.put('/heatingCircuits/hc1/manualTempOverride/status', {'value': 'on'})
         self.put('/heatingCircuits/hc1/manualTempOverride/temperature', {'value': float(temperature)})
 
+    def get_actualSupplyTemperature(self):
+        return self.get('/heatingCircuits/hc1/actualSupplyTemperature')
 
 class NefitClient(NefitCore):
     display_codes = {
@@ -266,6 +268,9 @@ class NefitClient(NefitCore):
             "active_program": data[0]['value']
         }
 
+    def get_actualSupplyTemperature(self):
+        data = super(NefitClient, self).get_actualSupplyTemperature()
+        return { "actual_temp" : data['value'] }
 
 class NefitClientCli(NefitClient):
     def get_status(self):
@@ -279,7 +284,7 @@ class NefitClientCli(NefitClient):
         return s
 
     def get_location(self):
-        return "Latitude: %s Longitude: %s" % super(NefitClientCli, self).get_outdoor()
+        return "Latitude: %s Longitude: %s" % super(NefitClientCli, self).get_location()
 
     def get_outdoor(self):
         value, unit_of_measure = super(NefitClientCli, self).get_outdoor()
