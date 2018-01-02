@@ -39,7 +39,7 @@ class AESCipher(object):
         return s + (self.bs - len(s) % self.bs) * chr(0)
 
 
-class NefitCore:
+class NefitCore(object):
     _accesskey_prefix = 'Ct7ZR03b_'
     _rrc_contact_prefix = 'rrccontact_'
     _rrc_gateway_prefix = 'rrcgateway_'
