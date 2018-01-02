@@ -9,7 +9,7 @@ from sleekxmpp import ClientXMPP
 from sleekxmpp.xmlstream import tostring
 
 _LOGGER = logging.getLogger(__name__)
-version = __version__ = '0.2.3'
+version = __version__ = '0.2.4'
 
 
 class AESCipher(object):
