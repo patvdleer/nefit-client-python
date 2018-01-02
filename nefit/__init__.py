@@ -187,6 +187,7 @@ class NefitCore:
     def get_actualSupplyTemperature(self):
         return self.get('/heatingCircuits/hc1/actualSupplyTemperature')
 
+
 class NefitClient(NefitCore):
     display_codes = {
         '-H': 'central heating active',
@@ -270,7 +271,8 @@ class NefitClient(NefitCore):
 
     def get_actualSupplyTemperature(self):
         data = super(NefitClient, self).get_actualSupplyTemperature()
-        return { "actual_temp" : data['value'] }
+        return {"actual_temp": data['value']}
+
 
 class NefitClientCli(NefitClient):
     def get_status(self):

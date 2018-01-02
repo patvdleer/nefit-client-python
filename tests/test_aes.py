@@ -15,13 +15,11 @@ class AesTest(unittest.TestCase):
         text_decrypted = self.client.decrypt(text_encrypted)
         self.assertEqual(text, text_decrypted)
 
-
     # decrypt a known encrypted string
     def test_decrypt(self):
-        text_encrypted=b'NSsVDVOegzLWF+Kpgcscgw=='
+        text_encrypted = b'NSsVDVOegzLWF+Kpgcscgw=='
         text_decrypted = self.client.decrypt(text_encrypted)
         self.assertEqual("super_secret", text_decrypted)
-
 
 
 if __name__ == '__main__':
