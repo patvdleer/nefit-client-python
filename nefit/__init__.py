@@ -7,6 +7,7 @@ import logging
 from pyaes import AESModeOfOperationECB, Encrypter, Decrypter, PADDING_NONE
 from sleekxmpp import ClientXMPP
 from sleekxmpp.xmlstream import tostring
+from ssl import PROTOCOL_SSLv23
 
 _LOGGER = logging.getLogger(__name__)
 version = __version__ = '0.2.4'
@@ -79,6 +80,7 @@ class NefitCore(object):
         self._to = self._rrc_gateway_prefix + identifier
 
         self.client = ClientXMPP(jid=jid, password=self._accesskey_prefix + access_key, sasl_mech=sasl_mech)
+        self.client.ssl_version = PROTOCOL_SSLv23
         self.client.add_event_handler("session_start", self.session_start)
         self.client.register_plugin('xep_0199')
 
