@@ -1,5 +1,10 @@
 # Bosch Nefit Easy™ Client
 
+## Install
+```bash
+pip install nefit-client
+```
+
 ## Usage
 ```bash
 usage: Nefit client [options]
@@ -16,7 +21,7 @@ optional arguments:
   --get-year-total      Display the current total gas usage
   --display-code        Display code
   --set-temperature SET_TEMPERATURE
-                        Display code
+                        Set temperature
   -v, --verbose         Increase output verbosity
   --version             show program s version number and exit
 ```
