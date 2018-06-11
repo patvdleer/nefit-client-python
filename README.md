@@ -13,6 +13,7 @@ optional arguments:
                         Access key, 12 long
   --password PASSWORD   Password, usually postalcode + housenumber
   --status              Status
+  --get-year-total      Display the current total gas usage
   --display-code        Display code
   --set-temperature SET_TEMPERATURE
                         Display code

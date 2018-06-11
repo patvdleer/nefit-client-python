@@ -38,6 +38,7 @@ class CLI:
         parser.add_argument("--pressure", help="Display pressure", action="store_true")
         parser.add_argument("--program", help="Display program", action="store_true")
         parser.add_argument("--actual", help="Display actual supply temperature", action="store_true")
+        parser.add_argument("--get-year-total", dest="year_total", help="Display the current total gas usage", action="store_true")
         parser.add_argument("--set-temperature", dest="set_temperature", help="Display code", type=float)
         parser.add_argument("-v", "--verbose", help="Increase output verbosity", action="store_true")
         parser.add_argument('--version', action='version', version='%(prog)s '+version)
@@ -75,6 +76,9 @@ class CLI:
 
         if args.actual:
             print(client.get_actualSupplyTemperature())
+
+        if args.year_total:
+            print(client.get_year_total())
 
         if args.set_temperature:
             client.set_temperature(args.set_temperature)

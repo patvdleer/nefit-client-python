@@ -10,7 +10,7 @@ from sleekxmpp.xmlstream import tostring
 from ssl import PROTOCOL_SSLv23
 
 _LOGGER = logging.getLogger(__name__)
-version = __version__ = '0.2.4'
+version = __version__ = '0.2.5'
 
 
 class AESCipher(object):
@@ -250,7 +250,7 @@ class NefitClient(NefitCore):
             'temp override temp setpoint': float(data['TOT']),
             'temp manual setpoint': float(data['MMT']),
             'hed enabled': data['HED_EN'].lower() == "true",
-            'hed device at home': data['HED_DEV'].lower() == "true"
+            'hed device at home': data['HED_DEV'].lower() == "true",
         }
 
     def get_location(self):
@@ -274,6 +274,10 @@ class NefitClient(NefitCore):
     def get_actualSupplyTemperature(self):
         data = super(NefitClient, self).get_actualSupplyTemperature()
         return {"actual_temp": data['value']}
+
+    def get_year_total(self):
+        data = super(NefitClient, self).get_year_total()
+        return data['value'], data['unitOfMeasure']
 
 
 class NefitClientCli(NefitClient):
