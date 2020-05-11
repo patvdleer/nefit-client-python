@@ -10,7 +10,15 @@ from sleekxmpp.xmlstream import tostring
 from ssl import PROTOCOL_SSLv23
 
 _LOGGER = logging.getLogger(__name__)
-version = __version__ = '0.2.5'
+version = __version__ = '0.2.6'
+
+
+class NefitException(Exception):
+    pass
+
+
+class NefitResponseException(NefitException):
+    pass
 
 
 class AESCipher(object):
@@ -121,7 +129,9 @@ class NefitCore(object):
         self.send("GET %s HTTP/1.1\rUser-Agent: NefitEasy\r\r" % uri)
         self.event.wait(timeout=timeout)
         self.client.del_event_handler("message", self.message)
-        return self.container[id(self.event)] if id(self.event) in self.container.keys() else None
+        if id(self.event) not in self.container.keys():
+            raise NefitResponseException("Unable to get %s" % uri)
+        return self.container[id(self.event)]
 
     def put(self, uri, data, timeout=10):
         data = data if isinstance(data, str) else json.dumps(data, separators=(',', ':'))

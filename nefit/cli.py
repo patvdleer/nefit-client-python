@@ -1,3 +1,4 @@
+import os
 import sys
 import signal
 
@@ -28,9 +29,26 @@ class CLI:
             prog="Nefit client",
             usage='%(prog)s [options]'
         )
-        parser.add_argument("--serial", help='Serial, 9 number digit', required=True)
-        parser.add_argument("--access-key", dest="access_key", help='Access key, 12 long', required=True)
-        parser.add_argument("--password", help='Password, usually postalcode + housenumber', required=True)
+
+        parser.add_argument(
+            "--serial",
+            help='Serial, 9 number digit',
+            default=os.environ.get("NEFIT_SERIAL"),
+            required=True
+        )
+        parser.add_argument(
+            "--access-key",
+            dest="access_key",
+            help='Access key, 12 long',
+            default=os.environ.get("NEFIT_ACCESS_KEY"),
+            required=True
+        )
+        parser.add_argument(
+            "--password",
+            help='Password, usually postalcode + housenumber',
+            default=os.environ.get("NEFIT_PASSWORD"),
+            required=True
+        )
         parser.add_argument("--status", help="Status", action="store_true")
         parser.add_argument("--display-code", dest="display_code", help="Display code", action="store_true")
         parser.add_argument("--location", help="Display location", action="store_true")
@@ -38,7 +56,12 @@ class CLI:
         parser.add_argument("--pressure", help="Display pressure", action="store_true")
         parser.add_argument("--program", help="Display program", action="store_true")
         parser.add_argument("--actual", help="Display actual supply temperature", action="store_true")
-        parser.add_argument("--get-year-total", dest="year_total", help="Display the current total gas usage", action="store_true")
+        parser.add_argument(
+            "--get-year-total",
+            dest="year_total",
+            help="Display the current total gas usage",
+            action="store_true"
+        )
         parser.add_argument("--set-temperature", dest="set_temperature", help="Display code", type=float)
         parser.add_argument("-v", "--verbose", help="Increase output verbosity", action="store_true")
         parser.add_argument('--version', action='version', version='%(prog)s '+version)
