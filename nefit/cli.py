@@ -2,7 +2,7 @@ import os
 import sys
 import signal
 
-from nefit import NefitClientCli
+from .core import NefitClientCli
 from nefit import version
 
 try:
@@ -34,20 +34,20 @@ class CLI:
             "--serial",
             help='Serial, 9 number digit',
             default=os.environ.get("NEFIT_SERIAL"),
-            required=True
+            required=not os.environ.get("NEFIT_SERIAL")
         )
         parser.add_argument(
             "--access-key",
             dest="access_key",
             help='Access key, 12 long',
             default=os.environ.get("NEFIT_ACCESS_KEY"),
-            required=True
+            required=not os.environ.get("NEFIT_ACCESS_KEY")
         )
         parser.add_argument(
             "--password",
             help='Password, usually postalcode + housenumber',
             default=os.environ.get("NEFIT_PASSWORD"),
-            required=True
+            required=not os.environ.get("NEFIT_PASSWORD")
         )
         parser.add_argument("--status", help="Status", action="store_true")
         parser.add_argument("--display-code", dest="display_code", help="Display code", action="store_true")
