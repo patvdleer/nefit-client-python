@@ -1,2 +1,2 @@
-pyaes
-sleekxmpp
+pyaes==1.6.1
+sleekxmpp==1.3.3
