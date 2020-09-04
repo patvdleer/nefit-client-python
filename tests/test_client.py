@@ -14,6 +14,7 @@ class ClientTest(unittest.TestCase):
         with self.assertRaises(NefitResponseException):
             client.get_display_code()
         client.disconnect()
+        client.force_disconnect()
 
 
 if __name__ == '__main__':
