@@ -50,6 +50,8 @@ class NefitCore(object):
     serial_number = None
     access_key = None
     password = None
+    use_ssl = False
+    use_tls = False
 
     jid = None
     _from = None
@@ -60,7 +62,8 @@ class NefitCore(object):
     event = None
     container = {}
 
-    def __init__(self, serial_number, access_key, password, host="wa2-mz36-qrmzh6.bosch.de", sasl_mech="DIGEST-MD5"):
+    def __init__(self, serial_number, access_key, password, host="wa2-mz36-qrmzh6.bosch.de", sasl_mech="SCRAM-SHA-1",
+                 use_ssl=False, use_tls=False):
         """
 
         :param serial_number:
@@ -68,11 +71,15 @@ class NefitCore(object):
         :param password:
         :param host:
         :param sasl_mech:
+        :param use_ssl:
+        :param use_tls:
         """
         serial_number = str(serial_number)
         self.serial_number = serial_number
         self.access_key = access_key
         self.password = password
+        self.use_ssl = use_ssl
+        self.use_tls = use_tls
 
         self.encryption = AESCipher(self._magic, access_key, password)
 
@@ -80,7 +87,11 @@ class NefitCore(object):
         self.jid = jid = self._from = self._rrc_contact_prefix + identifier
         self._to = self._rrc_gateway_prefix + identifier
 
-        self.client = ClientXMPP(jid=jid, password=self._accesskey_prefix + access_key, sasl_mech=sasl_mech)
+        self.client = ClientXMPP(
+            jid=jid,
+            password=self._accesskey_prefix + access_key,
+            sasl_mech=sasl_mech
+        )
         self.client.ssl_version = PROTOCOL_SSLv23
         self.client.add_event_handler("session_start", self.session_start)
         self.client.register_plugin('xep_0199')
@@ -105,15 +116,19 @@ class NefitCore(object):
             self.container[id(self.event)] = response
         self.event.set()
 
-    def connect(self, block=False):
-        self.client.connect()
+    def connect(self, block=False, use_ssl=None, use_tls=None, **kwargs):
+        self.client.connect(
+            use_ssl=use_ssl if use_ssl is not None else self.use_ssl,
+            use_tls=use_tls if use_tls is not None else self.use_tls,
+            **kwargs
+        )
         self.client.process(block=block)
 
     def session_start(self, event):
         self.client.send_presence()
         self.client.get_roster()
 
-    def disconnect(self, wait=None, send_close=True):
+    def disconnect(self, wait=None, send_close=False):
         self.client.disconnect(reconnect=False, wait=wait, send_close=send_close)
 
     def force_disconnect(self):

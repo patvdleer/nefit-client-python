@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 
 from setuptools import setup
-from nefit import version
+from nefit.version import version
 import os
 
 setup(

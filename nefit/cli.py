@@ -13,7 +13,7 @@ except ImportError:
 
 
 class CLI:
-    nefit_client = None
+    client = None
 
     @staticmethod
     def sig_handler(signum=None, frame=None):
@@ -49,6 +49,8 @@ class CLI:
             default=os.environ.get("NEFIT_PASSWORD"),
             required=not os.environ.get("NEFIT_PASSWORD")
         )
+        parser.add_argument("--enable-tls", help="Enable TLS", action="store_true")
+        parser.add_argument("--enable-ssl", help="Enable SSL", action="store_true")
         parser.add_argument("--status", help="Status", action="store_true")
         parser.add_argument("--display-code", dest="display_code", help="Display code", action="store_true")
         parser.add_argument("--location", help="Display location", action="store_true")
@@ -64,7 +66,7 @@ class CLI:
         )
         parser.add_argument("--set-temperature", dest="set_temperature", help="Display code", type=float)
         parser.add_argument("-v", "--verbose", help="Increase output verbosity", action="store_true")
-        parser.add_argument('--version', action='version', version='%(prog)s '+version)
+        parser.add_argument('--version', action='version', version='%(prog)s ' + version)
 
     def parse(self, args=None):
         args = self.parser.parse_args(args)
@@ -72,12 +74,27 @@ class CLI:
 
     def run(self):
         args = self.parse()
+        client = NefitClientCli(
+            args.serial,
+            args.access_key,
+            args.password,
+            use_ssl=args.enable_ssl,
+            use_tls=args.enable_tls
+        )
+        client.connect()
+        try:
+            self._run(args, client)
+        except Exception as e:
+            print(e, file=sys.stderr)
+            client.force_disconnect()
+            sys.exit(1)
+        client.disconnect()
+
+    @staticmethod
+    def _run(args, client):
 
         if args.verbose:
             NefitClientCli.set_verbose()
-
-        client = NefitClientCli(args.serial, args.access_key, args.password)
-        client.connect()
 
         if args.status:
             print(client.get_status())
@@ -106,8 +123,6 @@ class CLI:
         if args.set_temperature:
             client.set_temperature(args.set_temperature)
             print("Temperature set to %3.1f" % args.set_temperature)
-
-        client.disconnect()
 
 
 def main():
