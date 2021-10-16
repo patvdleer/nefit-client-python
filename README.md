@@ -1,5 +1,8 @@
 # Bosch Nefit Easy™ Client
 
+> DEPRECATED: MOVED TO https://gitlab.com/patvdleer/nefit-client-python
+
+
 ## Install
 ```bash
 pip install nefit-client
