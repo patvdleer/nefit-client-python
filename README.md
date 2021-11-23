@@ -1,6 +1,6 @@
 # Bosch Nefit Easy™ Client
 
-> DEPRECATED: MOVED TO https://gitlab.com/patvdleer/nefit-client-python
+> DEPRECATED in favour of: https://github.com/marconfus/aionefit
 
 
 ## Install
